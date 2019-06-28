@@ -1,24 +1,37 @@
-parameter (key_hash); # this is the key_hash that the vote will go to
-storage (map key_hash int); # this is the map with addresses (students) and their vote count associated to it
+parameter (address); # this is the address that the vote will go to
+storage (map address (set address)); # this is the map with addresses (students) and
+# the sets of addresses which have voted for them respectively
 
 code {
-      # get the parameter
-      # search in the map with the parameter as a key (with GET instruction)
-      # if found, increase its associated value (of type int) by 1
-      # if not found, ignore request and terminate contract
-      # return the updated map in storage and a list of operations
-       DUP; DUP; CAR; DIP { CDR }; GET;
+       # get the parameter
+       # search in the map with the parameter as a key (with GET instruction)
+       # if found, increase its associated value (of type int) by 1
+       # if not found, ignore request and terminate contract
+       # return the updated map in storage and a list of operations
+       DUP;
+       UNPAIR;
+       GET;
        IF_SOME # is the address parameter in the map?
          {
-           PUSH int 1;
-           ADD; # increase vote count by 1
+           DUP;
+           SOURCE; # get address of implicit contract that initiated this transaction
+           MEM; # check if the address is in the set of addresses which
+                # already voted for this candidate
+           IF { PUSH string "you already voted for that candidate";
+                FAILWITH;
+              }
+              { PUSH bool True;
+                SOURCE;
+                UPDATE;
+              };
+           DIP { UNPAIR; };
            SOME;
-           DIP { DUP; CAR; DIP { CDR } };
            SWAP;
-           UPDATE; # update the map with latest vote
+           UPDATE;
            NIL operation; PAIR;
          }
          {
-           FAIL;
+           PUSH string "you're voting for someone who is not on the list";
+           FAILWITH;
          }
      }
