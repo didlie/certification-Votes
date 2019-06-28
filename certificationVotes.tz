@@ -1,37 +1,41 @@
-parameter (address); # this is the address that the vote will go to
-storage (map address (set address)); # this is the map with addresses (students) and
+parameter address ; # this is the address that the vote will go to
+storage (pair (timestamp %deadline) (map address (set address))) ; # this is the deadline for voting + the map with addresses (students) and
 # the sets of addresses which have voted for them respectively
-
-code {
-       # get the parameter
-       # search in the map with the parameter as a key (with GET instruction)
-       # if found, increase its associated value (of type int) by 1
-       # if not found, ignore request and terminate contract
-       # return the updated map in storage and a list of operations
-       DUP;
-       UNPAIR;
-       GET;
-       IF_SOME # is the address parameter in the map?
-         {
-           DUP;
-           SOURCE; # get address of implicit contract that initiated this transaction
-           MEM; # check if the address is in the set of addresses which
+code { DUP ;
+       CDR ;
+       CAR ;
+       NOW ;
+       COMPARE ; # compare if dealine for voting is past
+       GT ;
+       IF { PUSH string "Voting perdiod is finished" ; FAILWITH }
+          {
+            # get the parameter
+            # search in the map with the parameter as a key (with GET instruction)
+            # if found, increase its associated value (of type int) by 1
+            # if not found, ignore request and terminate contract
+            # return the updated map in storage and a list of operations
+            DUP ;
+            UNPAIR ;
+            SWAP ;
+            CDR ;
+            SWAP ;
+            GET ;
+            IF_SOME # is the address parameter in the map?
+              { DUP ;
+                SOURCE ; # get address of implicit contract that initiated this transaction
+                MEM ; # check if the address is in the set of addresses which
                 # already voted for this candidate
-           IF { PUSH string "you already voted for that candidate";
-                FAILWITH;
-              }
-              { PUSH bool True;
-                SOURCE;
-                UPDATE;
-              };
-           DIP { UNPAIR; };
-           SOME;
-           SWAP;
-           UPDATE;
-           NIL operation; PAIR;
-         }
-         {
-           PUSH string "you're voting for someone who is not on the list";
-           FAILWITH;
-         }
-     }
+                IF { PUSH string "you already voted for that candidate" ; FAILWITH }
+                   { PUSH bool True ; SOURCE ; UPDATE } ;
+                DIP { UNPAIR } ;
+                SOME ;
+                SWAP ;
+                DIP { DIP { DUP } } ;
+                DIP { DIP { CDR } } ;
+                UPDATE ;
+                DIP { CAR } ;
+                SWAP ;
+                PAIR ;
+                NIL operation ;
+                PAIR }
+              { PUSH string "you're voting for someone who is not on the list" ; FAILWITH } } }

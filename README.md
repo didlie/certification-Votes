@@ -1,5 +1,6 @@
 # certification-votes
 
+## V0
 The current implementation allows us to have a fixed set of account for
 which an unlimited set of accounts can vote.
 
@@ -33,3 +34,14 @@ A few notes:
 This example uses alphanet, but you could use `zeronet.tzscan.io` instead.
 
 [sorting-url]: http://crash-blog.com/outil-de-tri-de-ligne/
+
+## V1
+In this version, we add the deadline for voting.
+
+To originate the contact, use a command similar to the following:
+```
+tezos-client -A alphanet.tzscan.io originate contract voting1 for genny transferring 0 from genny running certificationVotes.tz --init '(Pair 1561734120 { Elt "tz1TZwcbYiqfsJH9XDbmzaocttwMwqi9QWLH" {} ; Elt "tz1VKAYh4nE92ugzdPxE1gDxvuWvjzwKGsDt" {} })' --burn-cap 0.612
+```
+
+A few notes:
+* `Pair 1561734120 ...`: `1561734120` is the timestamp
