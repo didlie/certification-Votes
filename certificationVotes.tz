@@ -5,9 +5,9 @@ code { DUP ;
        CDR ;
        CAR ;
        NOW ;
-       COMPARE ; # compare if dealine for voting is past
+       COMPARE ; # compare if deadline for voting is past
        GT ;
-       IF { PUSH string "Voting perdiod is finished" ; FAILWITH }
+       IF { PUSH string "Voting period is finished" ; FAILWITH }
           {
             # get the parameter
             # search in the map with the parameter as a key (with GET instruction)
@@ -26,7 +26,19 @@ code { DUP ;
                 MEM ; # check if the address is in the set of addresses which
                 # already voted for this candidate
                 IF { PUSH string "you already voted for that candidate" ; FAILWITH }
-                   { PUSH bool True ; SOURCE ; UPDATE } ;
+                   { PUSH bool True ; SOURCE ; UPDATE } ; 
+                DUP;
+                SIZE;
+                PUSH nat 3;
+                SWAP;
+                SUB;
+                GE;
+                IF { SWAP;
+                     DUP;
+                     CAR;
+                     DROP;
+                     SWAP;
+                } {};
                 DIP { UNPAIR } ;
                 SOME ;
                 SWAP ;
