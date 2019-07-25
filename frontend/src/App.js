@@ -24,6 +24,19 @@ export default class App extends Component {
               Certification Query
             </h1>
             <CertifiedQuery certs={this.state.certs} />
+            <div
+              style={{ marginTop: '5rem' }}
+              class="alert alert-info"
+              role="alert"
+            >
+              <h4>Tel Aviv Tezos Training 2019</h4>
+              <p>Final certification project</p>
+              <p>
+                <a href="https://github.com/chainaccelerator/certification-Votes/tree/tel-aviv-20190725/frontend">
+                  Source Code
+                </a>
+              </p>
+            </div>
           </Col>
           <Col xs={1} />
         </Row>
