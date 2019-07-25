@@ -1,0 +1,187 @@
+parameter address ; # this is the address that the vote will go to
+storage (pair (timestamp %deadline) (map address (set address))) ; # this is the deadline for voting + the map with addresses (students) and
+# the sets of addresses which have voted for them respectively
+code { DUP ;
+       CAR ;
+       SENDER ;
+       IFCMPEQ {PUSH string "Error: You cannot vote for yourself!" ; FAILWITH} {} ;
+       DUP ;
+       CDR ;
+       CAR ;
+       NOW ;
+       COMPARE ; # compare if deadline for voting is past
+       GT ;
+       IF { PUSH string "Voting period is finished" ; FAILWITH }
+          {
+            # get the parameter
+            # search in the map with the parameter as a key (with GET instruction)
+            # if found, increase its associated value (of type int) by 1
+            # if not found, ignore request and terminate contract
+            # return the updated map in storage and a list of operations
+            DUP ;
+            UNPAIR ;
+            SWAP ;
+            CDR ;
+            SWAP ;
+            GET ;
+            IF_SOME # is the address parameter in the map?
+              { DUP ;
+                SOURCE ; # get address of implicit contract that initiated this transaction
+                MEM ; # check if the address is in the set of addresses which
+                # already voted for this candidate
+                IF { PUSH string "you already voted for that candidate" ; FAILWITH }
+                   { PUSH bool True ; SOURCE ; UPDATE } ; 
+                DUP;
+                SIZE;
+                PUSH nat 3;
+                SWAP;
+                SUB;
+                GE;
+                IF { SWAP;
+                     DUP;
+                     CAR;
+                     PUSH address "ooxVYEFcJDVnWwE2Ua5uFVgafiJYiJNuUZLMWWzj6cFzNKkDjSK" %cert;
+                     CONTRACT address;
+                     IF_SOME {SWAP; DIP{PUSH mutez 0}; TRANSFER_TOKENS} {PUSH string "contract does not exist"; FAILWITH};
+                     DROP;
+                     SWAP;
+                } {};
+                DIP { UNPAIR } ;
+                SOME ;
+                SWAP ;
+                DIP { DIP { DUP } } ;
+                DIP { DIP { CDR } } ;
+                UPDATE ;
+                DIP { CAR } ;
+                SWAP ;
+                PAIR ;
+                NIL operation ;
+                PAIR }
+              { PUSH string "you're voting for someone who is not on the list" ; FAILWITH } } }
+=======
+parameter address;   # this is the address that the vote will go to
+
+storage (pair (timestamp %deadline) (pair (address %orig) (map address (set address)))); # this is the deadline for voting + the map with addresses (students) and            #made second element with a pair to do comparison            # the sets of addresses which have voted for them respectively
+
+code
+{
+DUP;
+CDR;
+CAR;
+NOW;
+COMPARE;   # compare if dealine for voting is past
+GT;
+IF
+{
+PUSH string "Voting perdiod is finished";
+FAILWITH
+}
+{
+  # get the parameter
+  # search in the map with the parameter as a key (with GET instruction)
+  # if found, increase its associated value (of type int) by 1
+  # if not found, ignore request and terminate contract
+  # return the updated map in storage and a list of operations
+  DUP;
+  UNPAIR;
+  SWAP;
+  CDR;
+  CDR;
+  SWAP;
+  GET;
+  IF_SOME    # is the address parameter in the map?
+  {
+  DUP;
+  SOURCE;    # get address of implicit contract that initiated this transaction
+  MEM;       # check if the address is in the set of addresses which
+  # already voted for this candidate
+  IF
+  {
+  PUSH string "you already voted for that candidate";
+  FAILWITH
+  }
+  {
+  PUSH bool True;
+  SOURCE;
+  UPDATE
+  };
+  DIP
+  {
+  UNPAIR
+  };
+  SOME;
+  SWAP;
+  DIP
+  {
+  DIP
+  {
+  DUP
+  }
+  };
+  DIP
+  {
+  DIP
+  {
+  CDR
+  }
+  };
+  UPDATE;
+  DIP
+  {
+  CAR
+  };
+  SWAP;
+  PAIR;
+  NIL operation;
+  PAIR
+  }
+  {
+  UNPAIR;
+  SWAP;
+  UNPAIR;
+  SWAP;
+  DIP
+  {
+  SWAP
+  };
+  DUP;
+  CAR;
+  DIP
+  {
+  SWAP
+  };
+  SENDER;
+  IFCMPEQ
+  {
+  SWAP;
+  DUP;
+  DIP
+  {
+  SWAP
+  };
+  CDR;
+  SWAP;
+  EMPTY_SET address;
+  SWAP;
+  DIP
+  {
+  PUSH bool True
+  };
+  UPDATE;
+  DROP;
+  DIP
+  {
+  CAR
+  };
+  SWAP;
+  PAIR;
+  SWAP;
+  PAIR;
+  }
+  {
+  PUSH string "you're voting for someone who is not on the list";
+  FAILWITH
+  }
+  }
+  }
+    }
