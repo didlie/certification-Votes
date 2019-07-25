@@ -26,7 +26,7 @@ A few notes:
   may be different.
 * The inital value of storage for the smart contract `'{ Elt "…" {} ; Elt
   "…" {} }'` sets up the contract to be used to vote for two accounts, whose
-  addresses are included as keys in the map. Apparently the addresses should
+  addresses are included as keys in the map. The addresses should
   be ordered. For that one could use [an online service][sorting-url].
 * `--burn-cap` may be adjusted if you get an error message saying that the
   operation is going to exceed the cap limit.
