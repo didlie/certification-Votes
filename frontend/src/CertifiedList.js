@@ -18,12 +18,6 @@ export default class CertifiedList extends Component {
 
   componentDidMount() {
     eztz.node.setProvider('http://zeronet-tezos.chainaccelerator.academy:8732');
-    eztz.contract
-      .load(AUCTION)
-      .then(function(res) {
-        console.log(res); // Contract Object
-      })
-      .catch(function(e) {});
     eztz.contract.watch(REGISTRY, 5, this.logCerts);
   }
 
