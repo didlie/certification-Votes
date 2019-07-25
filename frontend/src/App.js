@@ -26,7 +26,7 @@ export default class App extends Component {
             <CertifiedQuery certs={this.state.certs} />
             <div
               style={{ marginTop: '5rem' }}
-              class="alert alert-info"
+              className="alert alert-info"
               role="alert"
             >
               <h4>Tel Aviv Tezos Training 2019</h4>
