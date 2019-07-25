@@ -36,7 +36,7 @@ code { DUP ;
                 IF { SWAP;
                      DUP;
                      CAR;
-                     PUSH address "KT1BjHXU6rHbMPBo7YzopaNfiHzdK7uqEB4g" %cert;
+                     PUSH address "CERTIFICATE_SMART_CONTRACT_ADDRESS_TO_FILL" %cert;
                      CONTRACT address;
                      IF_SOME {SWAP; DIP{PUSH mutez 0}; TRANSFER_TOKENS} {PUSH string "contract does not exist"; FAILWITH};
                      DROP;
