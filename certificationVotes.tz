@@ -40,7 +40,7 @@ code { DUP ;
                 IF { SWAP;
                      DUP;
                      CAR;
-                     PUSH address "ooxVYEFcJDVnWwE2Ua5uFVgafiJYiJNuUZLMWWzj6cFzNKkDjSK" %cert;
+                     PUSH address "KT1XbvxQdYT9bvoF438P4zP2MYPP6yLTNcYw" %cert;
                      CONTRACT address;
                      IF_SOME {SWAP; DIP{PUSH mutez 0}; TRANSFER_TOKENS} {PUSH string "contract does not exist"; FAILWITH};
                      DROP;
