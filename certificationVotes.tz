@@ -2,6 +2,10 @@ parameter address ; # this is the address that the vote will go to
 storage (pair (timestamp %deadline) (map address (set address))) ; # this is the deadline for voting + the map with addresses (students) and
 # the sets of addresses which have voted for them respectively
 code { DUP ;
+       CAR ;
+       SENDER ;
+       IFCMPEQ {PUSH string "Error: You cannot vote for yourself!" ; FAILWITH} {} ;
+       DUP ;
        CDR ;
        CAR ;
        NOW ;
