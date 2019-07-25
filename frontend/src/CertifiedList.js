@@ -3,8 +3,6 @@ import { eztz } from 'eztz';
 
 import { ListGroup } from 'react-bootstrap';
 
-const AUCTION = 'KT1V7bXs8xG16VxrHBhA6KJhUXBe2bpp96GK';
-
 const REGISTRY = 'KT19r51xXfFoXiJXjjA6CDaMdmcHqtyCHRVx';
 
 export default class CertifiedList extends Component {
