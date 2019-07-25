@@ -1,0 +1,48 @@
+parameter key_hash;
+storage (pair (pair (option key_hash) mutez) (pair address timestamp));
+code { { { DUP ; CAR ; DIP { CDR } } } ;
+       SWAP ;
+       DUP ;
+       { CDR ; CAR } ;
+       SENDER ;
+       { COMPARE ;
+         EQ ;
+         IF { DUP ;
+              { CDR ; CDR } ;
+              NOW ;
+              { { COMPARE ; GT } ; IF {} { { UNIT ; FAILWITH } } } ;
+              DIP { DROP } ;
+              DUP ;
+              { { DUP ; CAR ; DIP { CDR } } ;
+                { DUP ; CAR ; DIP { CDR } } ;
+                DIP { DIP { { DUP ; CAR ; DIP { CDR } } } } } ;
+              { IF_NONE
+                  { DROP ; DROP ; DROP ; NIL operation }
+                  { DROP ;
+                    DIP { CONTRACT unit ; { IF_NONE { { UNIT ; FAILWITH } } {} } } ;
+                    UNIT ;
+                    TRANSFER_TOKENS ;
+                    NIL operation ;
+                    { DIP { DIP { DROP } } } ;
+                    SWAP ;
+                    CONS } } }
+            { DUP ;
+              { CDR ; CDR } ;
+              NOW ;
+              { { COMPARE ; LT } ; IF {} { { UNIT ; FAILWITH } } } ;
+              DUP ;
+              { CAR ; CDR } ;
+              AMOUNT ;
+              { { COMPARE ; GT } ; IF {} { { UNIT ; FAILWITH } } } ;
+              { { DUP ; CAR ; DIP { CDR } } ; { DUP ; CAR ; DIP { CDR } } } ;
+              { IF_NONE
+                  { DROP ; NIL operation }
+                  { IMPLICIT_ACCOUNT ;
+                    SWAP ;
+                    UNIT ;
+                    TRANSFER_TOKENS ;
+                    NIL operation ;
+                    SWAP ;
+                    CONS } } ;
+              DIP { SWAP ; SOME ; DIP { AMOUNT } ; { PAIR ; PAIR } } } } ;
+       PAIR }
