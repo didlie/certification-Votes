@@ -1,0 +1,50 @@
+parameter address;
+storage (pair (address) (set address));
+
+code {
+       DUP;
+       CDDR;
+       SIZE @size;
+       PUSH nat 0;
+       IFCMPEQ
+         {
+           #record valid address
+           DUP;
+           CDDR;
+           SENDER;
+           PAIR;
+           SWAP;
+           CAR;
+           PAIR;
+         }
+         {
+         #Do nothing because we don't have to set the storage
+         };
+       #Check if recorded address for insertion matches the sender
+       DUP;
+       CDR;
+       CAR;
+       SENDER;
+       IFCMPEQ
+         {
+           #we update the set of addresses to include this incoming student
+           DUP;
+           DUP;
+           CDDR;
+           SWAP;
+           CAR;
+           PUSH bool True;
+           SWAP;
+           UPDATE;
+           SWAP;
+           CDAR;
+           PAIR;
+           NIL operation;
+           PAIR;
+         }
+         {
+           #fail with error message - not allowed to add new student
+           PUSH string "error 1: SENDER has no write access";
+           FAILWITH;
+         };
+     }
